@@ -1,25 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
+import Title from "./components/Title";
+import SunExposure from "./components/SunExposure";
+import Map from "./components/Map";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+      <div className="w-full h-full bg-gradient-to-r from-indigo-900 to-pink-900">
+          <div className="p-4">
+              <Title/>
+              <div className="flex">
+                  <SunExposure />
+                  <Map/>
+              </div>
+          </div>
+      </div>
+
+  )
 }
 
 export default App;
