@@ -6,19 +6,15 @@ const SunExposure = () => {
     useEffect(() => {
         const fetchIssData = async () => {
             try {
-                const response = await fetch(`${baseURL}/iss/illumination`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch ISS position');
-                }
+                const response = await fetch(`${baseURL}/iss/illumination`); //  We used async-await as this an external API call and needs to be loaded asynchronously.
                 const data = await response.json();
                 setIlluminationWindows(data);
-
             } catch (error) {
                 console.error(error);
             }
         };
-
-        const intervalId = setInterval(fetchIssData, 30000); // TODO: 1ere appel après 30 sec
+        fetchIssData();
+        const intervalId = setInterval(fetchIssData, 2000);
         return () => clearInterval(intervalId);
     }, []);
 
@@ -27,7 +23,7 @@ const SunExposure = () => {
         <div>
             <h1 className="p-4 mt-4 bg-gray-200 rounded-lg text-2l font-bold mb-4">ISS Illumination Time Windows</h1>
             <div className="p-4 mt-4 bg-gray-200 rounded-lg max-h-screen overflow-y-auto">
-                <ul className="menu  rounded-box">
+                <ul className="menu rounded-box">
                     {illuminationWindows.map((window, index) => (
                         <li className="bg-indigo-200 w-56 p-2 m-2 rounded-box">
                             <p><strong>Date:</strong> { new Date(window.start_time).toLocaleDateString()}</p>

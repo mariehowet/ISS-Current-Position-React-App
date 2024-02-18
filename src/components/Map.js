@@ -5,10 +5,8 @@ import baseURL from "../constants/BaseURL";
 
 const Map = () => {
     const [map, setMap] = useState(null);
-    const [issPosition, setIssPosition] = useState(null); //TODO : faire sortir lonngitude et latitude
+    const [issPosition, setIssPosition] = useState(["",""]);
     const [issMarker, setIssMarker] = useState(null);
-    const [lng, setLng] = useState(0);
-    const [lat, setLat] = useState(0);
     const [issSunExposed, setIssSunExposed] = useState(false);
 
     useEffect(() => {
@@ -18,13 +16,13 @@ const Map = () => {
             const mapInstance = new mapboxgl.Map({
                 container: 'map',
                 style: 'mapbox://styles/mapbox/streets-v11',
-                center: [0, 0], // TODO : centrer la map % au marqueur
+                center: [0, 0],
                 zoom: 1
             });
 
             mapInstance.addControl(new mapboxgl.NavigationControl());
 
-            mapInstance.on('load', () => {
+            mapInstance.on('load', () => { // When the map have finished to be loaded, I store it in map to get access to hit later
                 setMap(mapInstance);
             });
         };
@@ -36,20 +34,16 @@ const Map = () => {
         const fetchIssData = async () => {
             try {
                 const response = await fetch(`${baseURL}/iss/position`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch ISS position');
-                }
                 const data = await response.json();
                 setIssPosition([data['longitude'], data['latitude']]);
-                setLng(data["longitude"])
-                setLat(data["latitude"])
-                setIssSunExposed(data["visibility"]);
+                setIssSunExposed(data["is_sun_exposed"]);
             } catch (error) {
                 console.error(error);
             }
         };
 
-        const intervalId = setInterval(fetchIssData, 20000); // TODO: 1ere appel après 30 sec
+        fetchIssData();
+        const intervalId = setInterval(fetchIssData, 2000);
         return () => clearInterval(intervalId);
     }, []);
 
@@ -66,21 +60,22 @@ const Map = () => {
             const marker = new mapboxgl.Marker({
                 color: issSunExposed ? 'yellow' : 'black'
             })
-                .setLngLat([lng, lat])
+                .setLngLat(issPosition)
                 .addTo(map);
 
             // Save the marker reference for future updates
             setIssMarker(marker);
+            map.setCenter(issPosition)
             let sidebar = document.getElementById("sidebar");
-            sidebar.style.background = issSunExposed ? 'tahiti' : 'black';
-            sidebar.style.color = issSunExposed ? 'black' : 'white';
+            sidebar.style.background = issSunExposed ? 'yellow' : 'black';
+            sidebar.style.color = issSunExposed ? 'black' : 'yellow';
         }
     }, [map, issPosition, issSunExposed]);
 
     return (
-        <div id="map"  className="flex-auto p-4 mt-4 ml-4 bg-gray-200 rounded-lg overflow-y-auto">
+        <div id="map" className="flex-auto min-h-96 p-4 mt-4 ml-4 bg-gray-200 rounded-lg overflow-y-auto">
             <div id="sidebar" className="bg-blue-800 bg-opacity-90 text-white p-2 font-mono font-bold z-10 absolute top-0 left-0 m-3 rounded-md">
-                Longitude: {lng} | Latitude: {lat} | Sun exposure: {issSunExposed? "Light": "Dark"}
+                Longitude: {issPosition[0]} | Latitude: {issPosition[1]} | Sun exposure: {issSunExposed? "Daylight": "Eclipsed"}
             </div>
         </div>
     );

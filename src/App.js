@@ -4,7 +4,7 @@ import Map from "./components/Map";
 
 function App() {
   return (
-      <div className="w-full h-full bg-gradient-to-r from-indigo-900 to-pink-900">
+      <div className=" w-screen h-screen bg-gradient-to-r from-indigo-900 to-pink-900">
           <div className="p-4">
               <Title/>
               <div className="flex">
