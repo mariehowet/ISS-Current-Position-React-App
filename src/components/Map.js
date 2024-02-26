@@ -10,7 +10,7 @@ const Map = () => {
     const [issSunExposed, setIssSunExposed] = useState(false);
 
     useEffect(() => {
-        mapboxgl.accessToken = 'pk.eyJ1IjoibWFyaG93IiwiYSI6ImNsc24wZGFlMDBoNWoyam9lZ2VmanNtMHIifQ.5APRNGiD_m2sVqx0AKkM_g';
+        mapboxgl.accessToken = VITE_API_KEY;
 
         const initializeMap = () => {
             const mapInstance = new mapboxgl.Map({
